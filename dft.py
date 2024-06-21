@@ -53,14 +53,10 @@ def main():
     # Carrega a imagem
     original_image = imread(file_path)
 
-    # Se a imagem estiver em RGB, converta para escala de cinza
     if len(original_image.shape) == 3:
         original_image = rgb2gray(original_image)
 
-    # Normaliza a imagem para a faixa [0, 1]
     original_image = original_image / 255.0
-
-    # Configurações das máscaras
     vertical_mask_coords = [(-590, -560, 955, 970), (590, 620, 955, 970)]
     horizontal_mask_coords = [(600, 615, 0, 955), (600, 615, -955, None)]
     combined_mask_coords = [(600, 610, 0, 950), (600, 610, -950, None), 
@@ -69,19 +65,16 @@ def main():
     if not os.path.exists('results'):
         os.makedirs('results')
 
-    # Aplica máscara vertical
     ver_fourier, ver_processed = apply_fourier_mask(original_image, vertical_mask_coords)
     ver_ssim, ver_mse = evaluate_image(original_image, ver_processed)
     plot_results(original_image, ver_fourier, ver_processed, "Vertical", 'results/vertical_result.png')
     print(f"SSIM Vertical: {ver_ssim:.4f}, MSE Vertical: {ver_mse:.4f}")
 
-    # Aplica máscara horizontal
     hor_fourier, hor_processed = apply_fourier_mask(original_image, horizontal_mask_coords)
     hor_ssim, hor_mse = evaluate_image(original_image, hor_processed)
     plot_results(original_image, hor_fourier, hor_processed, "Horizontal", 'results/horizontal_result.png')
     print(f"SSIM Horizontal: {hor_ssim:.4f}, MSE Horizontal: {hor_mse:.4f}")
 
-    # Aplica máscara combinada
     comb_fourier, comb_processed = apply_fourier_mask(original_image, combined_mask_coords)
     comb_ssim, comb_mse = evaluate_image(original_image, comb_processed)
     plot_results(original_image, comb_fourier, comb_processed, "Vertical e Horizontal", 'results/combined_result.png')
